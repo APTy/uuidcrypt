@@ -10,20 +10,34 @@ type UUIDCrypt interface {
 	Run() error
 }
 
-func NewUUIDCrypt(input File, output File, processor Processor, columns ...int) UUIDCrypt {
-	return &uuidCrypt{
-		input:     input,
-		output:    output,
-		processor: processor,
-		columns:   columns,
+type UUIDCryptOptions func(*uuidCrypt)
+
+func WithColumns(columns ...int) UUIDCryptOptions {
+	return func(u *uuidCrypt) {
+		u.columns = columns
 	}
 }
 
+func NewUUIDCrypt(input File, output File, processor Processor, options ...UUIDCryptOptions) UUIDCrypt {
+	u := &uuidCrypt{
+		input:       input,
+		output:      output,
+		processor:   processor,
+		columns:     []int{1},
+		headerError: false,
+	}
+	for _, opt := range options {
+		opt(u)
+	}
+	return u
+}
+
 type uuidCrypt struct {
-	input     File
-	output    File
-	processor Processor
-	columns   []int
+	input       File
+	output      File
+	processor   Processor
+	columns     []int
+	headerError bool
 }
 
 func (u *uuidCrypt) Run() error {
@@ -42,13 +56,21 @@ func (u *uuidCrypt) runOnce() error {
 	if err != nil {
 		return err
 	}
+	var rowErr error
 	for _, column := range u.columns {
 		col := column - 1
 		newUUID, err := u.processUUID(record[col])
 		if err != nil {
-			return err
+			rowErr = err
+			continue
 		}
 		record[col] = newUUID
+	}
+	if rowErr != nil {
+		if u.headerError {
+			return rowErr
+		}
+		u.headerError = true
 	}
 	if err := u.output.Write(record); err != nil {
 		return err

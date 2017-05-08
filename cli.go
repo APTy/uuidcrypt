@@ -25,7 +25,7 @@ func RunCLI() {
 		NewCSVFile(f.inputFile),
 		NewCSVFile(f.outputFile),
 		NewCrypterProcessor(toBytes(f.secret), toBytes(f.namespace), toCryptType(f.decrypt)),
-		1,
+		WithColumns(1),
 	)
 	if err := uuidCrypt.Run(); err != nil {
 		os.Stderr.WriteString(err.Error() + "\n")
