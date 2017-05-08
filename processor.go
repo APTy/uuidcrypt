@@ -2,7 +2,6 @@ package main
 
 import (
 	"crypto/aes"
-	"crypto/cipher"
 	"crypto/hmac"
 	"crypto/md5"
 )
@@ -24,10 +23,7 @@ func NewCrypterProcessor(secret, namespace []byte, cryptType CryptType) Processo
 	if err != nil {
 		panic(err)
 	}
-	cipher, err := cipher.NewGCM(block)
-	if err != nil {
-		panic(err)
-	}
+	cipher := NewECB(block)
 	return &crypterProcessor{
 		key:       key,
 		cipher:    cipher,
@@ -37,7 +33,7 @@ func NewCrypterProcessor(secret, namespace []byte, cryptType CryptType) Processo
 
 type crypterProcessor struct {
 	key       []byte
-	cipher    cipher.AEAD
+	cipher    *ECB
 	cryptType CryptType
 	nonce     []byte
 }
@@ -60,17 +56,9 @@ func (p *crypterProcessor) Process(in []byte) []byte {
 }
 
 func (p *crypterProcessor) encrypt(in []byte) []byte {
-	out := make([]byte, len(in))
-	for i := range in {
-		out[i] = in[i] ^ p.key[i]
-	}
-	return out
+	return p.cipher.Encrypt(in)
 }
 
 func (p *crypterProcessor) decrypt(in []byte) []byte {
-	out := make([]byte, len(in))
-	for i := range in {
-		out[i] = in[i] ^ p.key[i]
-	}
-	return out
+	return p.cipher.Decrypt(in)
 }
