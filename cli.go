@@ -36,7 +36,7 @@ func parseFlags() flags {
 	var f flags
 	flag.StringVar(&f.secret, "s", "", "Secret key used to generate all encryption keys")
 	flag.StringVar(&f.namespace, "n", "", "Namespace to generate an entity-specific encryption key")
-	flag.StringVar(&f.delimiter, "F", "", "Custom delimiter for CSV file (default: ',')")
+	// flag.StringVar(&f.delimiter, "F", "", "Custom delimiter for CSV file (default: ',')")
 	// flag.StringVar(&f.columns, "c", "", "Comma-separated list of columns to encrypt/decrypt (default: 1)")
 	flag.StringVar(&f.outputFile, "o", "-", "Output file")
 	flag.BoolVar(&f.decrypt, "d", false, "Set operation to DECRYPT (default: ENCRYPT)")
