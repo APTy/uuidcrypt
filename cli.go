@@ -5,9 +5,6 @@ import (
 	"os"
 )
 
-var secret = []byte("bluebill dolly gongs cramer reca")
-var namespace = []byte("test")
-
 type flags struct {
 	inputFile  string
 	outputFile string
@@ -33,9 +30,9 @@ func RunCLI() {
 }
 
 func parseFlags() flags {
-	var f flags
-	flag.StringVar(&f.secret, "s", "", "Secret key used to generate all encryption keys")
-	flag.StringVar(&f.namespace, "n", "", "Namespace to generate an entity-specific encryption key")
+	f := defaultFlagsFromEnv()
+	stringVarIfNoDefault(&f.secret, "s", "Secret key used to generate all encryption keys")
+	stringVarIfNoDefault(&f.namespace, "n", "Namespace to generate an entity-specific encryption key")
 	// flag.StringVar(&f.delimiter, "F", "", "Custom delimiter for CSV file (default: ',')")
 	// flag.StringVar(&f.columns, "c", "", "Comma-separated list of columns to encrypt/decrypt (default: 1)")
 	flag.StringVar(&f.outputFile, "o", "-", "Output file")
@@ -47,6 +44,22 @@ func parseFlags() flags {
 		f.inputFile = "-"
 	}
 	return f
+}
+
+func defaultFlagsFromEnv() flags {
+	var f flags
+	f.secret = os.Getenv("UUIDCRYPT_SECRET")
+	f.namespace = os.Getenv("UUIDCRYPT_NAMESPACE")
+	return f
+}
+
+func stringVarIfNoDefault(s *string, name, description string) {
+	currentValue := *s
+	defaultValue := ""
+	flag.StringVar(s, name, defaultValue, description)
+	if *s == defaultValue {
+		*s = currentValue
+	}
 }
 
 func toBytes(str string) []byte {
