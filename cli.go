@@ -2,18 +2,20 @@ package main
 
 import (
 	"flag"
+	"fmt"
 	"os"
 )
 
 type flags struct {
-	inputFile  string
-	outputFile string
-	secret     string
-	namespace  string
-	delimiter  string
-	columns    string
-	inPlace    bool
-	decrypt    bool
+	inputFile   string
+	outputFile  string
+	secret      string
+	namespace   string
+	delimiter   string
+	columns     string
+	inPlace     bool
+	decrypt     bool
+	showVersion bool
 }
 
 func RunCLI() {
@@ -26,6 +28,10 @@ func runCLI() error {
 	f, err := parseFlags()
 	if err != nil {
 		return err
+	}
+	if f.showVersion {
+		fmt.Fprintf(os.Stdout, "uuidcrypt %s\n", version)
+		return nil
 	}
 	uuidCrypt := NewUUIDCrypt(
 		NewCSVFile(f.inputFile),
@@ -51,6 +57,7 @@ func parseFlags() (flags, error) {
 	flag.StringVar(&f.outputFile, "o", "-", "Output file")
 	flag.BoolVar(&f.decrypt, "d", false, "Set operation to DECRYPT (default: ENCRYPT)")
 	flag.BoolVar(&f.inPlace, "i", false, "Operate on the file in-place")
+	flag.BoolVar(&f.showVersion, "version", false, "Display version information")
 	flag.Parse()
 	f.inputFile = flag.Arg(0)
 	if f.inputFile == "" {
