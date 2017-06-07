@@ -32,7 +32,7 @@ func (c CLI) run() error {
 		NewCSVFile(cfg.inputFile, WithDelimiter(cfg.delimiter)),
 		NewCSVFile(cfg.outputFile, WithDelimiter(cfg.delimiter)),
 		NewCrypterProcessor(toBytes(cfg.secret), toBytes(cfg.namespace), toCryptType(cfg.decrypt)),
-		WithColumns(1),
+		WithColumns(cfg.columns...),
 	)
 	if err := uuidCrypt.Run(); err != nil {
 		return err

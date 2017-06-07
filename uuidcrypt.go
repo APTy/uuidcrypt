@@ -14,7 +14,9 @@ type UUIDCryptOptions func(*uuidCrypt)
 
 func WithColumns(columns ...int) UUIDCryptOptions {
 	return func(u *uuidCrypt) {
-		u.columns = columns
+		if columns != nil && len(columns) > 0 {
+			u.columns = columns
+		}
 	}
 }
 
@@ -59,6 +61,9 @@ func (u *uuidCrypt) runOnce() error {
 	var rowErr error
 	for _, column := range u.columns {
 		col := column - 1
+		if col > len(record)-1 || col < 0 {
+			continue
+		}
 		newUUID, err := u.processUUID(record[col])
 		if err != nil {
 			rowErr = err

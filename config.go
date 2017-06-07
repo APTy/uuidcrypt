@@ -3,6 +3,8 @@ package main
 import (
 	"flag"
 	"os"
+	"strconv"
+	"strings"
 )
 
 type RunConfig interface {
@@ -17,7 +19,7 @@ type Config struct {
 	secret      string
 	namespace   string
 	delimiter   string
-	columns     string
+	columns     []int
 	inPlace     bool
 	decrypt     bool
 	showVersion bool
@@ -33,10 +35,11 @@ func NewFlagConfig() RunConfig {
 
 func (c *flagConfig) Load() error {
 	cfg := defaultFlagsFromEnv()
+	var columns string
 	stringVarIfNoDefault(&cfg.secret, "s", "Secret key used to generate all encryption keys")
 	stringVarIfNoDefault(&cfg.namespace, "n", "Namespace to generate an entity-specific encryption key")
 	flag.StringVar(&cfg.delimiter, "F", "", "Custom delimiter for CSV file (default: ',')")
-	// flag.StringVar(&f.columns, "c", "", "Comma-separated list of columns to encrypt/decrypt (default: 1)")
+	flag.StringVar(&columns, "c", "", "Comma-separated list of columns to encrypt/decrypt (default: 1)")
 	flag.StringVar(&cfg.outputFile, "o", "-", "Output file")
 	flag.BoolVar(&cfg.decrypt, "d", false, "Set operation to DECRYPT (default: ENCRYPT)")
 	flag.BoolVar(&cfg.inPlace, "i", false, "Operate on the file in-place")
@@ -48,6 +51,11 @@ func (c *flagConfig) Load() error {
 	}
 	if err := setFilesIfInPlace(&cfg); err != nil {
 		return err
+	}
+	if intColumns, err := parseColumns(columns); err != nil {
+		return err
+	} else {
+		cfg.columns = intColumns
 	}
 	c.config = cfg
 	return nil
@@ -117,4 +125,27 @@ func removeBackupFileIfInPlace(c Config) error {
 		return nil
 	}
 	return os.Remove(c.inputFile)
+}
+
+func parseColumns(columns string) ([]int, error) {
+	var intColumns []int
+	strippedColumns := strings.Replace(columns, " ", "", -1)
+	splitColumns := strings.Split(strippedColumns, ",")
+	for i, col := range splitColumns {
+		if len(splitColumns) == 1 && col == "" {
+			break
+		}
+		if col == "" {
+			continue
+		}
+		if intColumns == nil {
+			intColumns = make([]int, len(splitColumns))
+		}
+		intCol, err := strconv.Atoi(col)
+		if err != nil {
+			return nil, err
+		}
+		intColumns[i] = intCol
+	}
+	return intColumns, nil
 }
