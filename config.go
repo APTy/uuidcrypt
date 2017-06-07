@@ -49,6 +49,7 @@ func (c *flagConfig) Load() error {
 	if err := setFilesIfInPlace(&cfg); err != nil {
 		return err
 	}
+	c.config = cfg
 	return nil
 }
 
