@@ -16,9 +16,13 @@ type File interface {
 
 type CSVOptions func(*csvFile)
 
-func WithDelimiter(delimiter rune) CSVOptions {
+func WithDelimiter(delimiter string) CSVOptions {
+	runeDelimiter := defaultDelimiter
+	if delimiter != "" {
+		runeDelimiter = []rune(delimiter)[0]
+	}
 	return func(f *csvFile) {
-		f.delimiter = delimiter
+		f.delimiter = runeDelimiter
 	}
 }
 

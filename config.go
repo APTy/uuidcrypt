@@ -35,7 +35,7 @@ func (c *flagConfig) Load() error {
 	cfg := defaultFlagsFromEnv()
 	stringVarIfNoDefault(&cfg.secret, "s", "Secret key used to generate all encryption keys")
 	stringVarIfNoDefault(&cfg.namespace, "n", "Namespace to generate an entity-specific encryption key")
-	// flag.StringVar(&f.delimiter, "F", "", "Custom delimiter for CSV file (default: ',')")
+	flag.StringVar(&cfg.delimiter, "F", "", "Custom delimiter for CSV file (default: ',')")
 	// flag.StringVar(&f.columns, "c", "", "Comma-separated list of columns to encrypt/decrypt (default: 1)")
 	flag.StringVar(&cfg.outputFile, "o", "-", "Output file")
 	flag.BoolVar(&cfg.decrypt, "d", false, "Set operation to DECRYPT (default: ENCRYPT)")
