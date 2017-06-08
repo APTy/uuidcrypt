@@ -13,10 +13,21 @@ const (
 	DecryptType
 )
 
+// Processor is an object that can run some transformation over a
+// slice of bytes.
 type Processor interface {
 	Process([]byte) []byte
 }
 
+// NewCrypterProcessor uses the secret and namespace provided to run
+// a two-way encryption or decryption during Process(). The cryptType
+// argument determines whether to encrypt or decrypt.
+//
+// The secret is used to create a 128-bit MD5 HMAC of the namespace.
+// The resulting hash is used as the key for encrypting and
+// decrypting data using an AES-128 ECB cipher.
+//
+// Data passed to Process() should be 16 bytes in length.
 func NewCrypterProcessor(secret, namespace []byte, cryptType CryptType) Processor {
 	key := keyGen(secret, namespace)
 	block, err := aes.NewCipher(key)

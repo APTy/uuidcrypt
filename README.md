@@ -9,20 +9,42 @@ go get github.com/APTy/uuidcrypt
 
 ## Examples
 
-### Encrypt UUIDs
+### Sample input (plaintext)
+A sample CSV file with UUIDs in the first column.
 ```
-uuidcrypt -s 'my secret password' -n 'namespace-foo' myfile.csv
+$ cat testdata/testfile.csv
+4a1981ca-94af-481d-8266-58d86cc8199a,other,data
+37abbed5-e81e-45d6-a6d4-3548685203cc,other,data
+c3263b22-ed7b-45b8-9e3f-f55b16b3a37f,other,data
+2cdca796-68cf-45b7-90ce-fad929209d3d,other,data
+```
+
+### Encrypt UUIDs
+Encrypt the UUIDs in the CSV and make a temp copy.
+```
+$ uuidcrypt -s 'my secret password' -n 'namespace-foo' testdata/testfile.csv | tee /tmp/testfile.csv.enc
+aeee3314-701a-0e2e-ae26-050735153353,other,data
+69d0f027-bec9-1bdc-966b-930f0766367c,other,data
+ef98ae92-eed6-f41e-bdc2-b9ce61ce6b59,other,data
+9f0ac2ce-44d3-bb5e-d41b-3aa5d18d0242,other,data
 ```
 
 ### Decrypt UUIDs
+Decrypt the UUIDs in the CSV from the temp copy and verify that its the same as the plaintext input.
 ```
-uuidcrypt -d -s 'my secret password' -n 'namespace-foo' myfile.csv
+$ uuidcrypt -d -s 'my secret password' -n 'namespace-foo' /tmp/testfile.csv.enc
+4a1981ca-94af-481d-8266-58d86cc8199a,other,data
+37abbed5-e81e-45d6-a6d4-3548685203cc,other,data
+c3263b22-ed7b-45b8-9e3f-f55b16b3a37f,other,data
+2cdca796-68cf-45b7-90ce-fad929209d3d,other,data
 ```
 
-By default, it will parse the CSV as comma-delimited (',') and encrypt/decrypt all UUIDs in the first column only.
+By default, it will parse the CSV as comma-delimited (`','`) and encrypt/decrypt all UUIDs in the first column only.
+See Usage for configuring the field delimiter and which columns are transformed.
 
 
-### Testing
+### Adhoc
+You can also pipe into the `uuidcrypt` CLI.
 ```
 # encrypt a random uuid
 

@@ -6,12 +6,18 @@ import (
 	"github.com/google/uuid"
 )
 
+// UUIDCrypt parses an input csv file, processes it, and produces an
+// output csv file. It is meant to be used with a NewCrypterProcessor
+// to encrypt UUIDs within the file in a reversible manner.
 type UUIDCrypt interface {
 	Run() error
 }
 
+// UUIDCryptOptions are optional parameters that can be provided
+// to UUIDCrypt to inform its configuration when it runs.
 type UUIDCryptOptions func(*uuidCrypt)
 
+// WithColumns specifies which columns in the CSV should be processed.
 func WithColumns(columns ...int) UUIDCryptOptions {
 	return func(u *uuidCrypt) {
 		if columns != nil && len(columns) > 0 {
@@ -20,7 +26,14 @@ func WithColumns(columns ...int) UUIDCryptOptions {
 	}
 }
 
-func NewUUIDCrypt(input File, output File, processor Processor, options ...UUIDCryptOptions) UUIDCrypt {
+// NewUUIDCrypt returns a UUIDCrypt object for encrypting the UUIDs
+// of an input csv file and producing an output csv file.
+func NewUUIDCrypt(
+	input File,
+	output File,
+	processor Processor,
+	options ...UUIDCryptOptions,
+) UUIDCrypt {
 	u := &uuidCrypt{
 		input:       input,
 		output:      output,

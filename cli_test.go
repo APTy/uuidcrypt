@@ -10,11 +10,12 @@ const (
 	testSecret    = "foo"
 	testNamespace = "bar"
 
-	testInputFile    = "testfile.csv"
-	testEncInputFile = "testfile.csv.enc"
-	testOutputFile   = ".testfile.csv"
-	testOutputFile2  = ".testfile.csv2"
-	testOutputFile3  = ".testfile.csv3"
+	testDir          = "testdata/"
+	testInputFile    = testDir + "testfile.csv"
+	testEncInputFile = testDir + "testfile.csv.enc"
+	testOutputFile   = testDir + ".testfile.csv"
+	testOutputFile2  = testDir + ".testfile.csv2"
+	testOutputFile3  = testDir + ".testfile.csv3"
 )
 
 func failIfError(t *testing.T, err error) {

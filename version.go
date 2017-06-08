@@ -1,3 +1,4 @@
 package main
 
-var version = "0.1.0"
+// Version is the current uuidcrypt version.
+var Version = "0.1.1"

@@ -7,12 +7,16 @@ import (
 	"strings"
 )
 
+// RunConfig decides how uuidcrypt will run.
 type RunConfig interface {
 	Load() error
 	Config() Config
 	Done() error
 }
 
+// Config provides user input to the CLI invocation.
+// TODO: a lot of config could live with UUIDCrypt as opposed to
+//       being so tightly coupled to the CLI.
 type Config struct {
 	inputFile   string
 	outputFile  string

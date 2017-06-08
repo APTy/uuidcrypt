@@ -25,7 +25,7 @@ func (c CLI) run() error {
 	}
 	cfg := c.cfg.Config()
 	if cfg.showVersion {
-		fmt.Fprintf(os.Stdout, "uuidcrypt %s\n", version)
+		fmt.Fprintf(os.Stdout, "uuidcrypt %s\n", Version)
 		return nil
 	}
 	uuidCrypt := NewUUIDCrypt(
