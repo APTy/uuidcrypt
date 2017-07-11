@@ -18,15 +18,16 @@ type RunConfig interface {
 // TODO: a lot of config could live with UUIDCrypt as opposed to
 //       being so tightly coupled to the CLI.
 type Config struct {
-	inputFile   string
-	outputFile  string
-	secret      string
-	namespace   string
-	delimiter   string
-	columns     []int
-	inPlace     bool
-	decrypt     bool
-	showVersion bool
+	inputFile       string
+	outputFile      string
+	secret          string
+	namespace       string
+	delimiter       string
+	delimiterOutput string
+	columns         []int
+	inPlace         bool
+	decrypt         bool
+	showVersion     bool
 }
 
 type flagConfig struct {
@@ -43,6 +44,7 @@ func (c *flagConfig) Load() error {
 	stringVarIfNoDefault(&cfg.secret, "s", "Secret key used to generate all encryption keys")
 	stringVarIfNoDefault(&cfg.namespace, "n", "Namespace to generate an entity-specific encryption key")
 	flag.StringVar(&cfg.delimiter, "F", "", "Custom delimiter for CSV file (default: ',')")
+	flag.StringVar(&cfg.delimiterOutput, "OF", "", "Custom output delimiter for CSV file (default: ',')")
 	flag.StringVar(&columns, "c", "", "Comma-separated list of columns to encrypt/decrypt (default: 1)")
 	flag.StringVar(&cfg.outputFile, "o", "-", "Output file")
 	flag.BoolVar(&cfg.decrypt, "d", false, "Set operation to DECRYPT (default: ENCRYPT)")

@@ -30,7 +30,7 @@ func (c CLI) run() error {
 	}
 	uuidCrypt := NewUUIDCrypt(
 		NewCSVFile(cfg.inputFile, WithDelimiter(cfg.delimiter)),
-		NewCSVFile(cfg.outputFile, WithDelimiter(cfg.delimiter)),
+		NewCSVFile(cfg.outputFile, WithDelimiter(cfg.delimiterOutput)),
 		NewCrypterProcessor(toBytes(cfg.secret), toBytes(cfg.namespace), toCryptType(cfg.decrypt)),
 		WithColumns(cfg.columns...),
 	)

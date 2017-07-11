@@ -17,9 +17,9 @@ type File interface {
 type CSVOptions func(*csvFile)
 
 func WithDelimiter(delimiter string) CSVOptions {
-	runeDelimiter := defaultDelimiter
-	if delimiter != "" {
-		runeDelimiter = []rune(delimiter)[0]
+	runeDelimiter, err := parseStringToRune(delimiter)
+	if err != nil {
+		runeDelimiter = defaultDelimiter
 	}
 	return func(f *csvFile) {
 		f.delimiter = runeDelimiter
@@ -45,6 +45,7 @@ type csvFile struct {
 	writer    *csv.Writer
 	filename  string
 	delimiter rune
+	numLines  uint
 }
 
 func (f *csvFile) Read() ([]string, error) {
@@ -53,7 +54,9 @@ func (f *csvFile) Read() ([]string, error) {
 			return nil, err
 		}
 	}
-	return f.reader.Read()
+	row, err := f.reader.Read()
+	f.numLines++
+	return row, err
 }
 
 func (f *csvFile) createReader() error {
