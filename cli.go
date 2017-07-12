@@ -29,8 +29,8 @@ func (c CLI) run() error {
 		return nil
 	}
 	uuidCrypt := NewUUIDCrypt(
-		NewCSVFile(cfg.inputFile, WithDelimiter(cfg.delimiter), WithFixQuotes(cfg.fixQuotes)),
-		NewCSVFile(cfg.outputFile, WithDelimiter(cfg.delimiterOutput), WithFixQuotes(cfg.fixQuotes)),
+		NewCSVFile(cfg.inputFile, WithDelimiter(cfg.delimiter), WithFixQuotes(cfg.fixQuotes), WithBurnQuotes(cfg.burnQuotes)),
+		NewCSVFile(cfg.outputFile, WithDelimiter(cfg.delimiterOutput), WithFixQuotes(cfg.fixQuotes), WithBurnQuotes(cfg.burnQuotes)),
 		NewCrypterProcessor(toBytes(cfg.secret), toBytes(cfg.namespace), toCryptType(cfg.decrypt)),
 		WithColumns(cfg.columns...),
 	)

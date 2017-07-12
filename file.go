@@ -35,6 +35,12 @@ func WithFixQuotes(fixQuotes bool) CSVOptions {
 	}
 }
 
+func WithBurnQuotes(burnQuotes bool) CSVOptions {
+	return func(f *csvFile) {
+		f.burnQuotes = burnQuotes
+	}
+}
+
 const defaultDelimiter = ','
 
 func NewCSVFile(filename string, options ...CSVOptions) File {
@@ -49,15 +55,16 @@ func NewCSVFile(filename string, options ...CSVOptions) File {
 }
 
 type csvFile struct {
-	r         io.ReadCloser
-	w         io.WriteCloser
-	bw        *bufio.Writer
-	reader    *csv.Reader
-	writer    *csv.Writer
-	filename  string
-	delimiter rune
-	numLines  uint
-	fixQuotes bool
+	r          io.ReadCloser
+	w          io.WriteCloser
+	bw         *bufio.Writer
+	reader     *csv.Reader
+	writer     *csv.Writer
+	filename   string
+	delimiter  rune
+	numLines   uint
+	fixQuotes  bool
+	burnQuotes bool
 }
 
 func (f *csvFile) Read() ([]string, error) {
@@ -96,6 +103,8 @@ func (f *csvFile) openFileOrStdin(filename string) (io.ReadCloser, error) {
 	}
 	if f.fixQuotes {
 		return readerWithUnicodeQuotes(file), nil
+	} else if f.burnQuotes {
+		return readerWithoutQuotes(file), nil
 	}
 	return file, nil
 }
@@ -113,6 +122,19 @@ func readerWithUnicodeQuotes(file io.ReadCloser) io.ReadCloser {
 	return r
 }
 
+func readerWithoutQuotes(file io.ReadCloser) io.ReadCloser {
+	r, w := io.Pipe()
+	br := bufio.NewReader(file)
+	bw := bufio.NewWriter(w)
+	go func() {
+		defer file.Close()
+		defer w.Close()
+		// replace the standard ascii quote rune with nothing
+		streamReplace(w, br, bw, '"', 0)
+	}()
+	return r
+}
+
 func streamReplace(w *io.PipeWriter, br *bufio.Reader, bw *bufio.Writer, find, replace rune) {
 	for {
 		r1, _, err := br.ReadRune()
@@ -122,6 +144,9 @@ func streamReplace(w *io.PipeWriter, br *bufio.Reader, bw *bufio.Writer, find, r
 			return
 		}
 		if r1 == find {
+			if replace == 0 {
+				continue
+			}
 			r1 = replace
 		}
 		if _, err := bw.WriteRune(r1); err != nil {
