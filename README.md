@@ -53,6 +53,8 @@ Usage of uuidcrypt:
   -c string
         Comma-separated list of columns to encrypt/decrypt (default: 1)
   -d    Set operation to DECRYPT (default: ENCRYPT)
+  -fix-quotes
+        Attempt to fix quotes in a malformed CSV (experimental)
   -i    Operate on the file in-place
   -n string
         Namespace to generate an entity-specific encryption key
