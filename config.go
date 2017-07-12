@@ -43,8 +43,8 @@ func (c *flagConfig) Load() error {
 	var columns string
 	stringVarIfNoDefault(&cfg.secret, "s", "Secret key used to generate all encryption keys")
 	stringVarIfNoDefault(&cfg.namespace, "n", "Namespace to generate an entity-specific encryption key")
-	flag.StringVar(&cfg.delimiter, "F", "", "Custom delimiter for CSV file (default: ',')")
-	flag.StringVar(&cfg.delimiterOutput, "OF", "", "Custom output delimiter for CSV file (default: ',')")
+	flag.StringVar(&cfg.delimiter, "F", "", "Field separator for CSV file (default: ',')")
+	flag.StringVar(&cfg.delimiterOutput, "OF", "", "Field separator for output CSV file (default: ',')")
 	flag.StringVar(&columns, "c", "", "Comma-separated list of columns to encrypt/decrypt (default: 1)")
 	flag.StringVar(&cfg.outputFile, "o", "-", "Output file")
 	flag.BoolVar(&cfg.decrypt, "d", false, "Set operation to DECRYPT (default: ENCRYPT)")

@@ -7,7 +7,7 @@ A tool for two-way encryption of UUIDs in CSV files as a layer of obfuscation. I
 go get github.com/APTy/uuidcrypt
 ```
 
-## Examples
+## Simple example with a CSV file
 
 ### Sample input (plaintext)
 A sample CSV file with UUIDs in the first column.
@@ -42,21 +42,26 @@ c3263b22-ed7b-45b8-9e3f-f55b16b3a37f,other,data
 By default, it will parse the CSV as comma-delimited (`','`) and encrypt/decrypt all UUIDs in the first column only.
 See Usage for configuring the field delimiter and which columns are transformed.
 
-
-### Adhoc
-You can also pipe into the `uuidcrypt` CLI.
+## Usage
 ```
-# encrypt a random uuid
-
-$ echo 558ece65-c7c8-4ad2-83dd-f696b2c540a4 | uuidcrypt -s 'my secret' -n 'my namespace'
-0fe55a05-c4d4-6858-2ef7-9176b3d1312f
-
-# decrypt it back
-
-$ echo 0fe55a05-c4d4-6858-2ef7-9176b3d1312f | uuidcrypt -s 'my secret' -n 'my namespace' -d
-558ece65-c7c8-4ad2-83dd-f696b2c540a4
-
-# the result should be the same as the original UUID
+$ uuidcrypt -help
+Usage of uuidcrypt:
+  -F string
+        Field separator for CSV file (default: ',')
+  -OF string
+        Field separator for output CSV file (default: ',')
+  -c string
+        Comma-separated list of columns to encrypt/decrypt (default: 1)
+  -d    Set operation to DECRYPT (default: ENCRYPT)
+  -i    Operate on the file in-place
+  -n string
+        Namespace to generate an entity-specific encryption key
+  -o string
+        Output file (default "-")
+  -s string
+        Secret key used to generate all encryption keys
+  -version
+        Display version information
 ```
 
 ### Environment Variables
@@ -72,22 +77,18 @@ $ echo 0fe55a05-c4d4-6858-2ef7-9176b3d1312f | uuidcrypt -d
 558ece65-c7c8-4ad2-83dd-f696b2c540a4
 ```
 
-## Usage
+### Custom CSV field separator/delimiter
+
+Delimit input by a tab (`\t`) and delimit output by a space (` `).
 ```
-$ uuidcrypt -help
-Usage of uuidcrypt:
-  -F string
-        Custom delimiter for CSV file (default: ',')
-  -c string
-        Comma-separated list of columns to encrypt/decrypt (default: 1)
-  -d    Set operation to DECRYPT (default: ENCRYPT)
-  -i    Operate on the file in-place
-  -n string
-        Namespace to generate an entity-specific encryption key
-  -o string
-        Output file (default "-")
-  -s string
-        Secret key used to generate all encryption keys
-  -version
-        Display version information
+$ echo -e 'd13d625c-f451-40b8-91e6-7b56589b91f1\t123\t456' | uuidcrypt -F '\t' -OF ' '
+66281a1f-eb55-59fd-7676-c9e50560ca42 123 456
+```
+
+### Custom columns
+
+Operate on columns `2` and `3`.
+```
+$ echo -e 'foo,d13d625c-f451-40b8-91e6-7b56589b91f1,d13d625c-f451-40b8-91e6-7b56589b91f1,123,456' | uuidcrypt -c 2,3
+foo,66281a1f-eb55-59fd-7676-c9e50560ca42,66281a1f-eb55-59fd-7676-c9e50560ca42,123,456
 ```
