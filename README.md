@@ -46,7 +46,6 @@ See Usage for configuring the field delimiter and which columns are transformed.
 ```
 $ uuidcrypt -help
 Usage of uuidcrypt:
-Usage of uuidcrypt:
   -F string
         Field separator for CSV file (default: ',')
   -OF string

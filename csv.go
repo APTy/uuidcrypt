@@ -19,11 +19,14 @@ type CSVReader interface {
 	Read() ([]string, error)
 }
 
-// NewCSVReader returns a CSVReader using the strings::split op.
-// This CSV parser supports double quotes that are escaped by placing
-// two double-quotes next to each other.
+// NewCSVReader returns a CSVReader using a combination of the
+// encoding/csv reader and the strings.split() method.
+//
+// It supports double quotes that are escaped by placing two
+// double-quotes next to each other.
 // 	e.g. `"i am ""tyler"""` is interpreted as `i am "tyler"`
-// This CSV parser supports double quotes that are escaped by placing
+//
+// It also supports double quotes that are escaped by placing
 // a backslash before the double quote character.
 // 	e.g. `"i am \"tyler\""` is interpreted as `i am "tyler"`
 func NewCSVReader(r io.Reader, delimiter rune) CSVReader {
