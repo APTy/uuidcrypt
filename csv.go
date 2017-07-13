@@ -43,10 +43,10 @@ type csvReader struct {
 }
 
 func (r *csvReader) Read() ([]string, error) {
-	if !r.r.Scan() {
-		return nil, io.EOF
+	line, err := r.readLine()
+	if err != nil {
+		return nil, err
 	}
-	line := r.r.Text()
 	columns := strings.Split(line, string(r.delimiter))
 	if err := r.validateNumColumns(len(columns)); err != nil {
 		return nil, err
@@ -55,6 +55,13 @@ func (r *csvReader) Read() ([]string, error) {
 		columns[i] = r.unquoteIfNeeded(columns[i])
 	}
 	return columns, nil
+}
+
+func (r *csvReader) readLine() (string, error) {
+	if r.r.Scan() {
+		return r.r.Text(), nil
+	}
+	return "", io.EOF
 }
 
 // check that the number of columns doesn't vary.
