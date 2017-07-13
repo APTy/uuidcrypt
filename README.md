@@ -46,6 +46,7 @@ See Usage for configuring the field delimiter and which columns are transformed.
 ```
 $ uuidcrypt -help
 Usage of uuidcrypt:
+Usage of uuidcrypt:
   -F string
         Field separator for CSV file (default: ',')
   -OF string
@@ -53,8 +54,6 @@ Usage of uuidcrypt:
   -c string
         Comma-separated list of columns to encrypt/decrypt (default: 1)
   -d    Set operation to DECRYPT (default: ENCRYPT)
-  -fix-quotes
-        Attempt to fix quotes in a malformed CSV (experimental)
   -i    Operate on the file in-place
   -n string
         Namespace to generate an entity-specific encryption key

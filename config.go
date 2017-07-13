@@ -28,8 +28,6 @@ type Config struct {
 	inPlace         bool
 	decrypt         bool
 	showVersion     bool
-	fixQuotes       bool
-	burnQuotes      bool
 }
 
 type flagConfig struct {
@@ -52,8 +50,6 @@ func (c *flagConfig) Load() error {
 	flag.BoolVar(&cfg.decrypt, "d", false, "Set operation to DECRYPT (default: ENCRYPT)")
 	flag.BoolVar(&cfg.inPlace, "i", false, "Operate on the file in-place")
 	flag.BoolVar(&cfg.showVersion, "version", false, "Display version information")
-	flag.BoolVar(&cfg.fixQuotes, "fix-quotes", false, "Attempt to fix quotes in a malformed CSV (experimental)")
-	flag.BoolVar(&cfg.burnQuotes, "burn-quotes", false, "Delete all quotes from the CSV (experimental)")
 	flag.Parse()
 	cfg.inputFile = flag.Arg(0)
 	if cfg.inputFile == "" {
