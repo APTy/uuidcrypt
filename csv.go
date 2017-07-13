@@ -57,6 +57,7 @@ func (r *csvReader) Read() ([]string, error) {
 	return columns, nil
 }
 
+// check that the number of columns doesn't vary.
 func (r *csvReader) validateNumColumns(lenColumns int) error {
 	numColumns := uint(lenColumns)
 	if r.numColumns == 0 {
